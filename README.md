@@ -14,7 +14,6 @@
     │  │              ├─controller
     │  │              ├─domain
     │  │              ├─dto
-    │  │              ├─entity
     │  │              ├─repository
     │  │              └─service
 ```
