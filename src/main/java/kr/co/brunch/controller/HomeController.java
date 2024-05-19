@@ -2,14 +2,17 @@ package kr.co.brunch.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.brunch.domain.DayOfWeek;
+import kr.co.brunch.domain.Keyword;
 import kr.co.brunch.domain.Magazine;
 import kr.co.brunch.dto.ResponseDto;
 import kr.co.brunch.dto.SerialResponseDto;
+import kr.co.brunch.dto.TopKeywordDto;
 import kr.co.brunch.dto.WeekContent;
 import kr.co.brunch.dto.WeekListDto;
 import kr.co.brunch.service.HomeService;
@@ -63,5 +66,15 @@ public class HomeController {
 			new WeekContent(DayOfWeek.SUNDAY.toString(), sundaySerialUpdateMagazineResponseList, null, null));
 
 		return ResponseDto.response(new WeekListDto(weekContentList));
+	}
+
+	@GetMapping("/posts/keywords")
+	public ResponseDto keywords() {
+		List<Keyword> allKeyword = homeService.findAllKeyword();
+		List<TopKeywordDto> collect = allKeyword.stream()
+			.map(k -> new TopKeywordDto(k.getKeywordNo(), k.getKeywordNo(), k.getDescription(), k.isNew()))
+			.collect(Collectors.toList());
+
+		return ResponseDto.response(new WeekListDto(collect));
 	}
 }

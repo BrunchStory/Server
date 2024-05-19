@@ -4,10 +4,12 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class WeekListDto {
-	private List<WeekContent> list;
+@NoArgsConstructor
+public class WeekListDto<T> {
+	private List<T> list;
 }
 
