@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.ctuwa40yk0uo.ap-northeast-2.rds.amazonaws.com:3306/brunch?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234qwer
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+    defer-datasource-initialization: true
