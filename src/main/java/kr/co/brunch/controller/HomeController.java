@@ -109,7 +109,7 @@ public class HomeController {
 				article.getArticleContentSummary(),
 				article.getUser().getUserName(),
 				article.getLikeCount(),
-				null,
+				article.getImageList().get(0).getStoreName(),
 				null);
 		} else {
 			Magazine magazine = magazineList.get(0);
