@@ -11,4 +11,7 @@ import kr.co.brunch.domain.Magazine;
 public interface MagazineRepository extends JpaRepository<Magazine, Long> {
 	@EntityGraph(attributePaths = {"user", "articleSet"})
 	List<Magazine> findByDayOf(DayOfWeek dayOf);
+
+	@EntityGraph(attributePaths = {"user"})
+	List<Magazine> findAll();
 }

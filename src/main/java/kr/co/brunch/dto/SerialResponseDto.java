@@ -35,11 +35,13 @@ public class SerialResponseDto {
 			.max(Comparator.comparing(Article::getArticleNo))
 			.orElse(null);
 
-		articleNo = article.getArticleNo();
-		articleTitle = article.getArticleTitle();
-		articleSubTitle = article.getArticleSubTitle();
-		articleContentSummary = article.getArticleContentSummary();
-		publishTime = article.getPublishTime().getNano();
-		likeCount = article.getLikeCount();
+		if (article != null) {
+			articleNo = article.getArticleNo();
+			articleTitle = article.getArticleTitle();
+			articleSubTitle = article.getArticleSubTitle();
+			articleContentSummary = article.getArticleContentSummary();
+			publishTime = article.getPublishTime().getNano();
+			likeCount = article.getLikeCount();
+		}
 	}
 }

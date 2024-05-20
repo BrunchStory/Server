@@ -5,34 +5,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import kr.co.brunch.domain.Article;
 import kr.co.brunch.domain.DayOfWeek;
 import kr.co.brunch.domain.Keyword;
 import kr.co.brunch.domain.Magazine;
+import kr.co.brunch.dto.ArticleDto;
+import kr.co.brunch.dto.EditorPicksDto;
+import kr.co.brunch.dto.FirstItemDto;
+import kr.co.brunch.dto.MagazineDto;
 import kr.co.brunch.dto.ResponseDto;
 import kr.co.brunch.dto.SerialResponseDto;
 import kr.co.brunch.dto.TopKeywordDto;
 import kr.co.brunch.dto.WeekContent;
 import kr.co.brunch.dto.WeekListDto;
-import kr.co.brunch.service.HomeService;
+import kr.co.brunch.service.ArticleService;
+import kr.co.brunch.service.KeywordService;
+import kr.co.brunch.service.MagazineService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class HomeController {
 
-	private final HomeService homeService;
+	private final MagazineService magazineService;
+	private final ArticleService articleService;
+	private final KeywordService keywordService;
 
 	@GetMapping("/posts/week")
 	public ResponseDto users() {
-		List<Magazine> mondayList = homeService.findByDayOf(DayOfWeek.MONDAY);
-		List<Magazine> tuesdayList = homeService.findByDayOf(DayOfWeek.TUESDAY);
-		List<Magazine> wednesdayList = homeService.findByDayOf(DayOfWeek.WEDNESDAY);
-		List<Magazine> thursdayList = homeService.findByDayOf(DayOfWeek.THURSDAY);
-		List<Magazine> fridayList = homeService.findByDayOf(DayOfWeek.FRIDAY);
-		List<Magazine> saturdayList = homeService.findByDayOf(DayOfWeek.SATURDAY);
-		List<Magazine> sundayList = homeService.findByDayOf(DayOfWeek.SUNDAY);
+		List<Magazine> mondayList = magazineService.findByDayOf(DayOfWeek.MONDAY);
+		List<Magazine> tuesdayList = magazineService.findByDayOf(DayOfWeek.TUESDAY);
+		List<Magazine> wednesdayList = magazineService.findByDayOf(DayOfWeek.WEDNESDAY);
+		List<Magazine> thursdayList = magazineService.findByDayOf(DayOfWeek.THURSDAY);
+		List<Magazine> fridayList = magazineService.findByDayOf(DayOfWeek.FRIDAY);
+		List<Magazine> saturdayList = magazineService.findByDayOf(DayOfWeek.SATURDAY);
+		List<Magazine> sundayList = magazineService.findByDayOf(DayOfWeek.SUNDAY);
 
 		List<SerialResponseDto> mondaySerialUpdateMagazineResponseList = new ArrayList<>();
 		List<SerialResponseDto> tuesdaySerialUpdateMagazineResponseList = new ArrayList<>();
@@ -70,11 +80,47 @@ public class HomeController {
 
 	@GetMapping("/posts/keywords")
 	public ResponseDto keywords() {
-		List<Keyword> allKeyword = homeService.findAllKeyword();
+		List<Keyword> allKeyword = keywordService.findAllKeyword();
 		List<TopKeywordDto> collect = allKeyword.stream()
 			.map(k -> new TopKeywordDto(k.getKeywordNo(), k.getKeywordNo(), k.getDescription(), k.isNew()))
 			.collect(Collectors.toList());
 
 		return ResponseDto.response(new WeekListDto(collect));
+	}
+
+	@GetMapping("/posts/editor-picks")
+	public ResponseDto picks(@RequestParam(value = "flag", defaultValue = "0") int flag) {
+
+		List<Magazine> magazineList = magazineService.findAll();
+		List<Article> articleList = articleService.findAll();
+		List<MagazineDto> magazineDtoList = magazineList.stream()
+			.map(m -> new MagazineDto(m.getMagazineTitle(), m.getUser().getUserName(), null, null, null))
+			.collect(Collectors.toList());
+		List<ArticleDto> articleDtoList = articleList.stream()
+			.map(a -> new ArticleDto(a.getArticleTitle(), a.getUser().getUserName(),
+				null, null))
+			.collect(Collectors.toList());
+
+		FirstItemDto firstItemDto;
+		if (flag == 0) {
+			Article article = articleList.get(0);
+			firstItemDto = new FirstItemDto(
+				article.getArticleTitle(),
+				article.getArticleContentSummary(),
+				article.getUser().getUserName(),
+				article.getLikeCount(),
+				null,
+				null);
+		} else {
+			Magazine magazine = magazineList.get(0);
+			firstItemDto = new FirstItemDto(
+				magazine.getMagazineTitle(),
+				null,
+				magazine.getUser().getUserName(),
+				0,
+				null,
+				null);
+		}
+		return ResponseDto.response(new EditorPicksDto(firstItemDto, magazineDtoList, articleDtoList));
 	}
 }
